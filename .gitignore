@@ -5,8 +5,9 @@
 *.cxx
 *.hxx
 *.cxx
-*.txt
 
 temp/
 .vscode/
 HORSE.dSYM/
+
+log.txt
