@@ -1,0 +1,12 @@
+*.cpp
+*.h
+*.hpp
+*.hxx
+*.cxx
+*.hxx
+*.cxx
+*.txt
+
+temp/
+.vscode/
+HORSE.dSYM/
