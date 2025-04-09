@@ -11,3 +11,6 @@ temp/
 HORSE.dSYM/
 
 log.txt
+
+paper_data/DYY2_ha_output_temp.csv
+paper_data/DYY2_cpp_teaser_conop_df.csv
