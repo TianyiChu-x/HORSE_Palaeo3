@@ -13,10 +13,14 @@ from utils import (
     build_event_seq,
 )
 import warnings
-
+import matplotlib as mpl
 
 warnings.filterwarnings("ignore")
 
+# Set global font size
+plt.rcParams.update({'font.size': 8})
+mpl.rcParams['pdf.fonttype'] = 42
+plt.rcParams['font.family'] = 'Arial'
 
 @jit(nopython=True)
 def _kruskals2(array1, array2):
@@ -74,7 +78,7 @@ def compare(
     :param ha_df: HORSE DataFrame.
     :param sequence2: Computed sequence, each row is step followed by horizon or event name sequences.
     :param sequence1: True data. Can be HORSE or CONOP.
-    :param compare_type: {'horse-horse', ‘horse-conop', 'conop-conop', 'conop-horse'}.
+    :param compare_type: {'horse-horse', 'horse-conop', 'conop-conop', 'conop-horse'}.
     :param conop_misfit_mode: {'order', 'horizon', 'depth'}. Default 'order'.
     :return: result DataFrame
     """
@@ -435,8 +439,8 @@ def compare_range(
         fad_lads[i] = fad_lads[i].iloc[sort_id, :]
 
     # draw
-    dist_fig, axes = plt.subplots(n_sequences, 1, figsize=(9, 8), dpi=300)
-    range_fig, ax = plt.subplots(figsize=(9, 5), dpi=300)
+    dist_fig, axes = plt.subplots(n_sequences, 1, figsize=(7.48, 6.65), dpi=300)
+    range_fig, ax = plt.subplots(figsize=(3.74, 2.08), dpi=300)
 
     if n_sequences > 3:
         colors = sns.color_palette("tab10", n_sequences)
@@ -488,14 +492,14 @@ def compare_range(
     dist_fig.tight_layout()
     range_fig.tight_layout()
     # Customize the chart
-    ax.set_xlabel("Taxon", fontsize=14)
-    ax.set_ylabel("Event Placement", fontsize=14)
+    ax.set_xlabel("Taxon", fontsize=8)
+    ax.set_ylabel("Event Placement", fontsize=8)
     # ax.set_title("Taxon Range Chart", fontsize=14)
-    ax.legend(fontsize=14, loc=legend_loc)
+    ax.legend(fontsize=7, loc='upper left')
 
     if show_taxon_names:
         # Rotate x ticks and make font size smaller
-        plt.xticks(rotation=-90, fontsize=12)
+        plt.xticks(rotation=-90, fontsize=8)
     else:
         ax.set_xticks([])
         ax.set_xticklabels([])
@@ -507,11 +511,11 @@ def compare_range(
 
 def main():
     ## Pseudo data
-    ha_path = r"paper_data/Pseudo_ha_v6.csv"
+    ha_path = r"../paper_data/Pseudo_ha_v6.csv"
     ha_df = pd.read_csv(ha_path, encoding="utf_8_sig")
     true_data = ha_df.sort_values('Horizon')['Horizon'].to_numpy()
     # CONOP
-    extra_conop_df_path = r"paper_data/Pseudo_ha_v6_cpp_conop_df.csv"
+    extra_conop_df_path = r"../paper_data/Pseudo_ha_v6_cpp_conop_df.csv"
     compare_type = "horse-conop"
     computed_data_by_conop_pp = pd.read_csv(extra_conop_df_path, encoding="utf_8_sig")[
         "Event id"
@@ -527,10 +531,10 @@ def main():
         colors=["#0081a7", "#f07167"],
         legend_loc="center right"
     )
-    range_fig.savefig("paper_figs/pseudo_ha_v6_CONOP_taxon_range.svg")
-    dist_fig.savefig("paper_figs/pseudo_ha_v6_CONOP_taxon_range_distr.svg")
+    range_fig.savefig("../paper_figs/pseudo_ha_v6_CONOP_taxon_range.pdf", dpi=300, format="pdf")
+    dist_fig.savefig("../paper_figs/pseudo_ha_v6_CONOP_taxon_range_distr.pdf", dpi=300, format="pdf")
     # CONOP + Teaser
-    extra_conop_df_path = r"paper_data/Pseudo_ha_v6_cpp_teaser_conop_df.csv"
+    extra_conop_df_path = r"../paper_data/Pseudo_ha_v6_cpp_teaser_conop_df.csv"
     computed_data_by_conop_pp = pd.read_csv(extra_conop_df_path, encoding="utf_8_sig")[
         "Event id"
     ]
@@ -546,10 +550,10 @@ def main():
         colors=["#0081a7", "#f07167"],
         legend_loc="center right"
     )
-    range_fig.savefig("paper_figs/pseudo_ha_v6_CONOP_Teaser_taxon_range.svg")
-    dist_fig.savefig("paper_figs/pseudo_ha_v6_CONOP_Teaser_taxon_range_distr.svg")
+    range_fig.savefig("../paper_figs/pseudo_ha_v6_CONOP_Teaser_taxon_range.pdf", dpi=300, format="pdf")
+    dist_fig.savefig("../paper_figs/pseudo_ha_v6_CONOP_Teaser_taxon_range_distr.pdf", dpi=300, format="pdf")
     # HORSE
-    horizon_id_path = r"paper_data/Pseudo_ha_v6-id.csv"
+    horizon_id_path = r"../paper_data/Pseudo_ha_v6-id.csv"
     compare_type = "horse-horse"
     data_computed = pd.read_csv(horizon_id_path)
     sequence_names = ["Ground Truth", "HORSE"]
@@ -563,10 +567,10 @@ def main():
         colors=["#0081a7", "#f07167"],
         legend_loc="center right"
     )
-    range_fig.savefig("paper_figs/pseudo_ha_v6_HORSE_taxon_range.svg")
-    dist_fig.savefig("paper_figs/pseudo_ha_v6_HORSE_taxon_range_distr.svg")
+    range_fig.savefig("../paper_figs/pseudo_ha_v6_HORSE_taxon_range.pdf", dpi=300, format="pdf")
+    dist_fig.savefig("../paper_figs/pseudo_ha_v6_HORSE_taxon_range_distr.pdf", dpi=300, format="pdf")
     # HORSE + Teaser
-    horizon_id_path = r"paper_data/Pseudo_ha_v6-teaser_id.csv"
+    horizon_id_path = r"../paper_data/Pseudo_ha_v6-teaser_id.csv"
     compare_type = "horse-horse"
     data_computed = pd.read_csv(horizon_id_path)
     sequence_names = ["Ground Truth", "HORSE + Teaser"]
@@ -580,8 +584,8 @@ def main():
         colors=["#0081a7", "#f07167"],
         legend_loc="center right"
     )
-    range_fig.savefig("paper_figs/pseudo_ha_v6_HORSE_Teaser_taxon_range.svg")
-    dist_fig.savefig("paper_figs/pseudo_ha_v6_HORSE_Teaser_taxon_range_distr.svg")
+    range_fig.savefig("../paper_figs/pseudo_ha_v6_HORSE_Teaser_taxon_range.pdf", dpi=300, format="pdf")
+    dist_fig.savefig("../paper_figs/pseudo_ha_v6_HORSE_Teaser_taxon_range_distr.pdf", dpi=300, format="pdf")
 
     ## dyy data (not provided)
     # ha_path = r"DYY2_ha_output_temp.csv"
@@ -610,15 +614,15 @@ def main():
     # dist_fig.savefig("paper_figs/DYY2_taxon_range_distr.svg")
 
     ## jxfan data
-    ha_path = r"paper_data/jxfan/HORSE.csv"
+    ha_path = r"../paper_data/jxfan/HORSE.csv"
     ha_df = pd.read_csv(ha_path, encoding="utf_8_sig")
-    sequence1_path = r"paper_data/jxfan/CONOP.csv"
+    sequence1_path = r"../paper_data/jxfan/CONOP.csv"
     sequence1 = pd.read_csv(sequence1_path, encoding="utf_8_sig")
 
-    sequence2_path = r"paper_data/jxfan/HORSE.csv"
+    sequence2_path = r"../paper_data/jxfan/HORSE.csv"
     sequence2 = pd.read_csv(sequence2_path, encoding="utf_8_sig")
 
-    sequence3_path = r"paper_data/jxfan/HA.csv"
+    sequence3_path = r"../paper_data/jxfan/HA.csv"
     sequence3 = pd.read_csv(sequence3_path, encoding="utf_8_sig")
 
     compare_type = "conop-horse-horse"
@@ -641,8 +645,8 @@ def main():
         colors=colors,
         legend_loc="upper left"
     )
-    range_fig.savefig("paper_figs/jxfan_taxon_range.svg")
-    dist_fig.savefig("paper_figs/jxfan_taxon_range_distr.svg")
+    # range_fig.savefig("../paper_figs/jxfan_taxon_range.pdf", dpi=300, format="pdf")
+    # dist_fig.savefig("../paper_figs/jxfan_taxon_range_distr.pdf", dpi=300, format="pdf")
 
 
 if __name__ == "__main__":

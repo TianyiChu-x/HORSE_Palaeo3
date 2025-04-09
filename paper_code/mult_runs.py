@@ -10,10 +10,14 @@ from sklearn.metrics import pairwise_distances
 import scipy
 from scipy.spatial.distance import squareform
 from scipy.linalg import eigh
+import matplotlib as mpl
+# Set global font size
+plt.rcParams.update({'font.size': 8})
+mpl.rcParams['pdf.fonttype'] = 42
+plt.rcParams['font.family'] = 'Arial'
 
-
-sequences_path = r'paper_data/Ten_runs_Pseudo_ha_v6/compare.csv'
-ha_path = r'paper_data/Pseudo_ha_v6.csv'
+sequences_path = r'../paper_data/Ten_runs_Pseudo_ha_v6/compare.csv'
+ha_path = r'../paper_data/Pseudo_ha_v6.csv'
 
 conop_misfit_mode = 'order'
 ha_df = pd.read_csv(ha_path, encoding='utf_8_sig')
@@ -96,12 +100,12 @@ for i in range(sequences_df.shape[0]):
     event_orders.append(np.argsort(this_event_series))
 
 # box plot of event and non-event horizons
-fig, axs = plt.subplots(1, 2, figsize=(10, 5), dpi=300)
+fig, axs = plt.subplots(1, 2, figsize=(7.48, 3.74), dpi=300)
 
 pearson_boxes = axs[0].boxplot(
     [pearson_has, event_pearson_has, no_event_pearson_has],
     patch_artist=True,
-    tick_labels=['All', 'Event-present', 'Event-absent']
+    tick_labels=['All', 'Present', 'Absent']
 )
 for patch, color in zip(pearson_boxes['boxes'], ['#0081a7', '#fdfcdc', '#f07167']):
     patch.set_facecolor(color)
@@ -111,7 +115,7 @@ for median in pearson_boxes['medians']:
 kendall_boxes = axs[1].boxplot(
     [kendall_has, event_kendall_has, no_event_kendall_has],
     patch_artist=True,
-    tick_labels=['All', 'Event-present', 'Event-absent']
+    tick_labels=['All', 'Present', 'Absent']
 )
 for patch, color in zip(kendall_boxes['boxes'], ['#0081a7', '#fdfcdc', '#f07167']):
     patch.set_facecolor(color)
@@ -130,12 +134,12 @@ for boxplot, ax in zip([pearson_boxes, kendall_boxes], axs):
     #     ax.text(whisker_x, whisker_y, f'{whisker_y:.4f}', verticalalignment='center', horizontalalignment='right')
 
 # axs[0].set_title('Pearson\'s r')
-axs[0].set_ylabel('Correlation Coefficient')
+axs[0].set_ylabel('Correlation Coefficient', fontsize=8)
 # axs[1].set_title('Kendall\'s tau')
-axs[1].set_ylabel('Correlation Coefficient')
+axs[1].set_ylabel('Correlation Coefficient', fontsize=8)
 
 fig.tight_layout()
-fig.savefig(r'paper_figs/horizon_correlation.svg')
+fig.savefig(r'../paper_figs/horizon_correlation.pdf', dpi=300, format="pdf")
 
 
 # plot of event placing
@@ -175,7 +179,7 @@ def draw_column(event_placings, min_val, max_val, ax=None):
     # fig.show()
     return fig if ax is None else None
 
-fig, axs = plt.subplots(1, 4, figsize=(10, 15), dpi=300)
+fig, axs = plt.subplots(1, 4, figsize=(3, 4.5), dpi=300)
 min_log_std = -1
 max_log_std = 7
 horse_teaser_fig = draw_column(np.array(event_orders)[(np.array(types) == 'HORSE') & (np.array(teasers) == 'Teaser')], min_log_std, max_log_std, ax=axs[0])
@@ -183,16 +187,16 @@ conop_teaser_fig = draw_column(np.array(event_orders)[(np.array(types) == 'CONOP
 horse_fig = draw_column(np.array(event_orders)[(np.array(types) == 'HORSE') & (np.array(teasers) == '')], min_log_std, max_log_std, ax=axs[2])
 conop_fig = draw_column(np.array(event_orders)[(np.array(types) == 'CONOP') & (np.array(teasers) == '')], min_log_std, max_log_std, ax=axs[3])
 fig.tight_layout()
-fig.savefig(r'paper_figs/event_col_stack.svg')
+fig.savefig(r'../paper_figs/event_col_stack.pdf', dpi=300, format="pdf")
 # Create a colorbar for reference
-fig, ax = plt.subplots(figsize=(2, 5), dpi=300)
+fig, ax = plt.subplots(figsize=(1.8, 4.5), dpi=300)
 norm = plt.Normalize(min_log_std, max_log_std)
 sm = plt.cm.ScalarMappable(cmap='viridis', norm=norm)
 sm.set_array([])
 cbar = plt.colorbar(sm, ax=ax)
-cbar.set_label('Event Placement Volatility')
+cbar.set_label('Event Placement Volatility', fontsize=8)
 fig.tight_layout()
-fig.savefig(r'paper_figs/event_col_stack_colorbar.svg')
+fig.savefig(r'../paper_figs/event_col_stack_colorbar.pdf', dpi=300, format="pdf")
 
 
 # plots of MDS
@@ -235,17 +239,17 @@ pcoa_coords = eigvecs[:, :2] * np.sqrt(eigvals[:2])
 explained_variance_ratio = eigvals[:2] / np.sum(eigvals)
 
 # Plot PCoA results
-fig, ax = plt.subplots(figsize=(6, 5), dpi=300)
+fig, ax = plt.subplots(figsize=(3.54, 2.96), dpi=300)
 for i, (type, teaser) in enumerate(zip(types, teasers)):
     ax.scatter(pcoa_coords[i, 0], pcoa_coords[i, 1], 
                color=colors[f'{type} {teaser}'], 
                label=f'{type} {teaser}', 
                marker=markers[f'{type} {teaser}'])
 
-ax.set_xlabel(f'PCo1 ({explained_variance_ratio[0]:.2%})')
-ax.set_ylabel(f'PCo2 ({explained_variance_ratio[1]:.2%})')
+ax.set_xlabel(f'PCo1 ({explained_variance_ratio[0]:.2%})', fontsize=7)
+ax.set_ylabel(f'PCo2 ({explained_variance_ratio[1]:.2%})', fontsize=7)
 handles, labels = ax.get_legend_handles_labels()
 by_label = dict(zip(labels, handles))
-ax.legend(by_label.values(), by_label.keys())
+ax.legend(by_label.values(), by_label.keys(), fontsize=7)
 plt.tight_layout()
-fig.savefig(r'paper_figs/pcoa.svg')
+fig.savefig(r'../paper_figs/pcoa.pdf', dpi=300, format="pdf")

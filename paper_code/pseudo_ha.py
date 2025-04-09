@@ -7,7 +7,12 @@ import networkx as nx
 import seaborn as sns
 import re
 import copy
+import matplotlib.patches as mpatches
+import os
 from utils import compute_penalty, find_fad_lad
+
+# Set global font size
+plt.rcParams.update({'font.size': 12})
 
 
 class CleaningConfigPseudo(object):
@@ -1257,7 +1262,7 @@ def main():
                                        AVG_SAMPLING_FACTOR,
                                        AVG_ACCUMULATION_RATE,
                                        AVG_SECTION_ENVIRONMENT_TYPES)
-    horizon_df.to_csv('Pseudo_ha_test.csv', index=False)
+    horizon_df.to_csv('../paper_data/Pseudo_ha_test.csv', index=False)
 
 
 if __name__ == "__main__":

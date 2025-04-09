@@ -12,8 +12,14 @@ from utils import (
     compute_penalty,
     build_event_seq,
 )
+import matplotlib as mpl
 import warnings
 
+
+# Set global font size
+plt.rcParams.update({'font.size': 8})
+mpl.rcParams['pdf.fonttype'] = 42
+plt.rcParams['font.family'] = 'Arial'
 
 warnings.filterwarnings("ignore")
 
@@ -74,7 +80,7 @@ def compare(
     :param ha_df: HORSE DataFrame.
     :param sequence2: Computed sequence, each row is step followed by horizon or event name sequences.
     :param sequence1: True data. Can be HORSE or CONOP.
-    :param compare_type: {'horse-horse', ‘horse-conop', 'conop-conop', 'conop-horse'}.
+    :param compare_type: {'horse-horse', 'horse-conop', 'conop-conop', 'conop-horse'}.
     :param conop_misfit_mode: {'order', 'horizon', 'depth'}. Default 'order'.
     :return: result DataFrame
     """
@@ -461,7 +467,7 @@ def compare_range(
     dist_fig.tight_layout()
 
     # Create a figure
-    range_fig, ax = plt.subplots(figsize=(9, 5), dpi=300)
+    range_fig, ax = plt.subplots(figsize=(7.5, 4.16), dpi=300)
 
     # Add data to the figure
     sns.barplot(
@@ -524,14 +530,14 @@ def compare_range(
         )
 
     # Customize the chart
-    ax.set_xlabel("Taxon", fontsize=14)
-    ax.set_ylabel("Event location", fontsize=14)
+    ax.set_xlabel("Taxon", fontsize=7)
+    ax.set_ylabel("Event location", fontsize=7)
     # ax.set_title("Taxon Range Chart", fontsize=14)
-    ax.legend(fontsize=14, loc="upper left")
+    ax.legend(fontsize=7, loc="upper left")
 
     if show_taxon_names:
         # Rotate x ticks and make font size smaller
-        plt.xticks(rotation=-90, fontsize=12)
+        plt.xticks(rotation=-90, fontsize=7)
     else:
         ax.set_xticks([])
         ax.set_xticklabels([])
@@ -550,7 +556,7 @@ def plot_result(
     spearman_events = result_df["Spearmans rho of event"]
     kendall_events = result_df["Kendalls tau of event"]
 
-    fig, axes = plt.subplots(2, 2, figsize=(12, 8), dpi=300)
+    fig, axes = plt.subplots(2, 2, figsize=(7.48, 5.5), dpi=300)
 
     # draw step-penalty
     ax_step_pen = axes[0, 0]
@@ -579,7 +585,7 @@ def plot_result(
 
     ax_step_pen.set_ylabel("Penalty")
     ax_step_pen.set_xlabel("Iteration")
-    ax_step_pen.legend()
+    ax_step_pen.legend(fontsize=7)
 
     # draw step-cc
     ax_step_cc_events = axes[0, 1]
@@ -590,7 +596,7 @@ def plot_result(
 
     ax_step_cc_events.set_xlabel("Iteration")
     ax_step_cc_events.set_ylabel("Correlation Coefficient")
-    ax_step_cc_events.legend()
+    ax_step_cc_events.legend(fontsize=7)
 
     # draw penalty-cc
     ax_pen_CONOP_cc_events = axes[1, 0]
@@ -623,11 +629,11 @@ def plot_result(
 
     ax_pen_CONOP_cc_events.set_xlabel("CONOP penalty")
     ax_pen_CONOP_cc_events.set_ylabel("Correlation Coefficient")
-    ax_pen_CONOP_cc_events.legend()
+    ax_pen_CONOP_cc_events.legend(fontsize=7)
     
     ax_pen_HORSE_cc_events.set_xlabel("HORSE penalty")
     ax_pen_HORSE_cc_events.set_ylabel("Correlation Coefficient")
-    ax_pen_HORSE_cc_events.legend()
+    ax_pen_HORSE_cc_events.legend(fontsize=7)
     
     fig.tight_layout()
 
@@ -635,15 +641,15 @@ def plot_result(
 
 
 def main():
-    ha_path = r"paper_data/Pseudo_ha_v6.csv"
+    ha_path = r"../paper_data/Pseudo_ha_v6.csv"
     conop_misfit_mode = "order"
 
     ha_df = pd.read_csv(ha_path, encoding="utf_8_sig")
     true_data = ha_df.copy(deep=True)
     true_data["Score"] = ha_df["Horizon"] / ha_df["Horizon"].max()
     
-    horizon_id_path = r"paper_data/Pseudo_ha_v6-teaser_id.csv"
-    result_path = r"paper_data/Pseudo_ha_v6-horse_teaser_results.csv"
+    horizon_id_path = r"../paper_data/Pseudo_ha_v6-teaser_id.csv"
+    result_path = r"../paper_data/Pseudo_ha_v6-horse_teaser_results.csv"
     compare_type = "horse-horse"
     data_computed = pd.read_csv(horizon_id_path)
 
@@ -657,8 +663,8 @@ def main():
         sequence1_name="Ground Truth",
         sequence2_name="HORSE + Teaser"
     )
-    range_fig.savefig("range_fig_true_horse_teaser.svg")
-    dist_fig.savefig("dist_fig_true_horse_teaser.svg")
+    range_fig.savefig("../paper_figs/range_fig_true_horse_teaser.pdf", dpi=300, format="pdf")
+    dist_fig.savefig("../paper_figs/dist_fig_true_horse_teaser.pdf", dpi=300, format="pdf")
 
     compare(
         ha_df=ha_df,
@@ -681,7 +687,7 @@ def main():
     fig = plot_result(
         result_df, true_conop_penalty=2251, true_horse_penalty=1997.72
     )
-    fig.savefig("paper_figs/iteration_pen_cc.svg")
+    fig.savefig("../paper_figs/iteration_pen_cc.pdf", dpi=300, format="pdf")
 
 if __name__ == "__main__":
     main()
